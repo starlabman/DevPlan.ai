@@ -20,7 +20,7 @@ const Header: React.FC = () => {
             </a>
             <div className="flex items-center space-x-4">
               <a 
-                href="https://github.com" 
+                href="https://github.com/starlabman" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-purple-600 transition-colors"
@@ -29,7 +29,7 @@ const Header: React.FC = () => {
                 <Github className="h-5 w-5" />
               </a>
               <a 
-                href="https://twitter.com" 
+                href="https://twitter.com/0xWeb3DevRel" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-purple-600 transition-colors"
