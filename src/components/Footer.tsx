@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
             </div>
             <div className="flex items-center space-x-4">
               <a 
-                href="https://github.com" 
+                href="https://github.com/starlabman" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors"
@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
                 <Github className="h-5 w-5" />
               </a>
               <a 
-                href="https://twitter.com" 
+                href="https://twitter.com/0xWeb3DevRel" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-white transition-colors"
@@ -50,7 +50,7 @@ const Footer: React.FC = () => {
                 <Twitter className="h-5 w-5" />
               </a>
               <a 
-                href="mailto:feedback@devplan.ai" 
+                href="mailto:akodjolabore@gmail.com" 
                 className="text-gray-400 hover:text-white transition-colors"
                 title="Send Feedback"
               >
