@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Code2 className="h-8 w-8 text-purple-400" />
-              <span className="text-xl font-bold">DevPlan.ai</span>
+              <span className="text-xl font-bold">Idea.ai</span>
             </div>
             <p className="text-gray-400 mb-4">
               AI-powered development planning tool that transforms your ideas into comprehensive 
@@ -61,7 +61,7 @@ const Footer: React.FC = () => {
 
           {/* About DevPlan */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">About DevPlan</h3>
+            <h3 className="text-lg font-semibold mb-4">About Idea.ai</h3>
             <ul className="space-y-3 text-gray-400">
               <li>• AI-generated development roadmaps</li>
               <li>• Comprehensive tech stack recommendations</li>
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
 
         <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="text-gray-400 text-sm">
-            © 2025 DevPlan.ai. Empowering developers to build better software.
+            © 2025 Idea.ai. Empowering developers to build better software.
           </div>
           <div className="mt-4 md:mt-0 text-gray-400 text-sm">
             Made possible by AI and open source technologies

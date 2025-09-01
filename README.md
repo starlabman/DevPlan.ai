@@ -1,12 +1,12 @@
-# DevPlan.ai
+# Idea.ai
 
 > AI-powered development planning tool that transforms your app ideas into comprehensive roadmaps with tech stacks, milestones, deployment strategies, and pitch decks.
 
-![DevPlan.ai](https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&fit=crop)
+![Idea.ai](https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&fit=crop)
 
 ## 🚀 Live Demo
 
-Visit the live application: [DevPlan.ai](https://lively-narwhal-d8cdba.netlify.app)
+Visit the live application: [Idea.ai](https://lively-narwhal-d8cdba.netlify.app)
 
 ## ✨ Features
 
@@ -75,7 +75,7 @@ Visit the live application: [DevPlan.ai](https://lively-narwhal-d8cdba.netlify.a
 ## 📁 Project Structure
 
 ```
-devplan-ai/
+idea-ai/
 ├── src/
 │   ├── components/
 │   │   ├── Header.tsx           # Navigation header
@@ -106,7 +106,7 @@ devplan-ai/
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd devplan-ai
+   cd idea-ai
    ```
 
 2. **Install dependencies**
@@ -230,3 +230,4 @@ This project is open source and available under the MIT License.
 ---
 
 **Ready to turn your ideas into code?** Start planning your next project with DevPlan.ai!
+**Ready to turn your ideas into code?** Start planning your next project with Idea.ai!

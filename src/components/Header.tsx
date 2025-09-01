@@ -8,7 +8,7 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-2">
             <Code2 className="h-8 w-8 text-purple-600" />
-            <span className="text-xl font-bold text-gray-900">DevPlan.ai</span>
+            <span className="text-xl font-bold text-gray-900">Idea.ai</span>
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
