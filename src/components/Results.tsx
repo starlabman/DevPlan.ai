@@ -1,27 +1,5 @@
 import React, { useState } from 'react';
-import { 
-  Code, 
-  Database, 
-  Smartphone, 
-  Server, 
-  CreditCard, 
-  Cloud, 
-  CheckCircle,
-  FolderTree,
-  Rocket,
-  Target,
-  Calendar,
-  Star,
-  Copy,
-  Download,
-  FileText,
-  ExternalLink,
-  Check,
-  RefreshCw,
-  Edit3,
-  Save,
-  Heart
-} from 'lucide-react';
+import { Code, Database, Smartphone, Server, CreditCard, Cloud, CheckCircle, FolderTree, Rocket, Target, Calendar, Star, Copy, Download, FileText, ExternalLink, Check, RefreshCw, CreditCard as Edit3, Save, Heart } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useUserIdeas } from '../hooks/useUserIdeas';
 
