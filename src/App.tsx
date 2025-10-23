@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import AuthModal from './components/AuthModal';
 import UserDashboard from './components/UserDashboard';
+import ChatAssistant from './components/ChatAssistant';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import PlanGenerator from './components/PlanGenerator';
@@ -44,6 +45,7 @@ function App() {
   const [currentIdea, setCurrentIdea] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showChatAssistant, setShowChatAssistant] = useState(false);
   const planGeneratorRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
@@ -121,6 +123,20 @@ function App() {
     planGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleRefineWithAI = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    setShowChatAssistant(true);
+  };
+
+  const handleIdeaRefined = (refinedIdea: string) => {
+    setCurrentIdea(refinedIdea);
+    setShowChatAssistant(false);
+    handleGeneratePlan(refinedIdea);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Header 
@@ -130,10 +146,11 @@ function App() {
       <Hero onStartNow={handleStartNow} />
       
       <div ref={planGeneratorRef}>
-        <PlanGenerator 
-          onGeneratePlan={handleGeneratePlan} 
+        <PlanGenerator
+          onGeneratePlan={handleGeneratePlan}
           isGenerating={isGenerating}
           currentIdea={currentIdea}
+          onRefineWithAI={handleRefineWithAI}
         />
       </div>
       
@@ -171,6 +188,13 @@ function App() {
           onNewIdea={handleNewIdea}
         />
       )}
+
+      <ChatAssistant
+        isOpen={showChatAssistant}
+        onClose={() => setShowChatAssistant(false)}
+        onIdeaRefined={handleIdeaRefined}
+        initialIdea={currentIdea}
+      />
     </div>
   );
 }
