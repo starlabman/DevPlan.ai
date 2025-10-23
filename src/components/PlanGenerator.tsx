@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Send, Lightbulb, Loader } from 'lucide-react';
+import { Send, Lightbulb, Loader, Sparkles } from 'lucide-react';
 
 interface PlanGeneratorProps {
   onGeneratePlan: (idea: string) => void;
   isGenerating: boolean;
   currentIdea: string;
+  onRefineWithAI?: () => void;
 }
 
-const PlanGenerator: React.FC<PlanGeneratorProps> = ({ onGeneratePlan, isGenerating, currentIdea }) => {
+const PlanGenerator: React.FC<PlanGeneratorProps> = ({ onGeneratePlan, isGenerating, currentIdea, onRefineWithAI }) => {
   const [idea, setIdea] = useState('');
 
   // Update the input when currentIdea changes (for editing)
@@ -56,11 +57,22 @@ const PlanGenerator: React.FC<PlanGeneratorProps> = ({ onGeneratePlan, isGenerat
             />
           </div>
           
-          <div className="flex justify-center mt-6">
+          <div className="flex justify-center gap-4 mt-6">
+            {onRefineWithAI && (
+              <button
+                type="button"
+                onClick={onRefineWithAI}
+                disabled={!idea.trim() || isGenerating}
+                className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200"
+              >
+                <Sparkles className="h-5 w-5 mr-2" />
+                Refine with AI
+              </button>
+            )}
             <button
               type="submit"
               disabled={!idea.trim() || isGenerating}
-              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all duration-200"
             >
               {isGenerating ? (
                 <>
