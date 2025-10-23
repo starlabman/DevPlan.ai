@@ -1,7 +1,15 @@
 import React from 'react';
-import { Code2, Github, Twitter } from 'lucide-react';
+import { Code2, Github, Twitter, User, LogIn } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
-const Header: React.FC = () => {
+interface HeaderProps {
+  onAuthClick: () => void;
+  onDashboardClick: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onAuthClick, onDashboardClick }) => {
+  const { user, loading } = useAuth();
+
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,6 +26,27 @@ const Header: React.FC = () => {
             <a href="#about" className="text-gray-600 hover:text-purple-600 transition-colors">
               About
             </a>
+            {!loading && (
+              <div className="flex items-center space-x-4">
+                {user ? (
+                  <button
+                    onClick={onDashboardClick}
+                    className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    <User className="h-4 w-4 mr-2" />
+                    My Ideas
+                  </button>
+                ) : (
+                  <button
+                    onClick={onAuthClick}
+                    className="inline-flex items-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    <LogIn className="h-4 w-4 mr-2" />
+                    Sign In
+                  </button>
+                )}
+              </div>
+            )}
             <div className="flex items-center space-x-4">
               <a 
                 href="https://github.com/starlabman" 

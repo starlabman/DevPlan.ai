@@ -18,8 +18,12 @@ import {
   ExternalLink,
   Check,
   RefreshCw,
-  Edit3
+  Edit3,
+  Save,
+  Heart
 } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
+import { useUserIdeas } from '../hooks/useUserIdeas';
 
 interface TechStackItem {
   name: string;
@@ -45,11 +49,22 @@ interface ResultsProps {
   originalIdea: string;
   onEditIdea: () => void;
   onRegeneratePlan: () => void;
+  onAuthClick?: () => void;
 }
 
-const Results: React.FC<ResultsProps> = ({ plan, originalIdea, onEditIdea, onRegeneratePlan }) => {
+const Results: React.FC<ResultsProps> = ({ 
+  plan, 
+  originalIdea, 
+  onEditIdea, 
+  onRegeneratePlan,
+  onAuthClick 
+}) => {
+  const { user } = useAuth();
+  const { saveIdea } = useUserIdeas();
   const [copySuccess, setCopySuccess] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const formatPlanAsText = () => {
     let text = `# Development Plan for: ${originalIdea}\n\n`;
@@ -179,6 +194,37 @@ const Results: React.FC<ResultsProps> = ({ plan, originalIdea, onEditIdea, onReg
     }
   };
 
+  const handleSaveIdea = async () => {
+    if (!user) {
+      onAuthClick?.();
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const title = originalIdea.length > 50 
+        ? originalIdea.substring(0, 50) + '...' 
+        : originalIdea;
+      
+      await saveIdea(
+        title,
+        originalIdea,
+        plan.techStack,
+        plan.roadmap,
+        plan.structure,
+        plan.deployment,
+        [] // pitch deck will be added separately
+      );
+      
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error saving idea:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <section className="py-24 bg-gray-50 animate-fade-in">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -192,6 +238,29 @@ const Results: React.FC<ResultsProps> = ({ plan, originalIdea, onEditIdea, onReg
           
           {/* Action Buttons */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <button
+              onClick={handleSaveIdea}
+              disabled={isSaving}
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg shadow-sm hover:shadow-md hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+            >
+              {saveSuccess ? (
+                <>
+                  <Heart className="h-5 w-5 mr-2 text-white fill-current" />
+                  Saved!
+                </>
+              ) : isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-5 w-5 mr-2" />
+                  {user ? 'Save Idea' : 'Sign In to Save'}
+                </>
+              )}
+            </button>
+            
             <button
               onClick={handleCopyPlan}
               className="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md text-gray-700 hover:text-gray-900 transition-all duration-200"

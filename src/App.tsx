@@ -1,4 +1,6 @@
 import React, { useState, useRef } from 'react';
+import AuthModal from './components/AuthModal';
+import UserDashboard from './components/UserDashboard';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import PlanGenerator from './components/PlanGenerator';
@@ -7,6 +9,8 @@ import PitchDeck from './components/PitchDeck';
 import Footer from './components/Footer';
 import { generatePlan } from './utils/planGenerator';
 import { generatePitchDeck } from './utils/pitchDeckGenerator';
+import { useAuth } from './hooks/useAuth';
+import { UserIdea } from './lib/supabase';
 
 interface Plan {
   techStack: Array<{
@@ -38,8 +42,12 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
   const [currentIdea, setCurrentIdea] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const planGeneratorRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  const { user } = useAuth();
 
   const handleStartNow = () => {
     planGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -82,9 +90,43 @@ function App() {
     }
   };
 
+  const handleLoadIdea = (idea: UserIdea) => {
+    setCurrentIdea(idea.description);
+    
+    // Reconstruct the plan from saved data
+    const loadedPlan: Plan = {
+      techStack: idea.tech_stack || [],
+      roadmap: idea.roadmap || [],
+      structure: idea.structure || [],
+      deployment: idea.deployment || []
+    };
+    
+    setPlan(loadedPlan);
+    
+    // Load pitch deck if available
+    if (idea.pitch_deck && idea.pitch_deck.length > 0) {
+      setPitchDeck(idea.pitch_deck);
+    }
+    
+    // Scroll to results
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleNewIdea = () => {
+    setPlan(null);
+    setPitchDeck(null);
+    setCurrentIdea('');
+    planGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header 
+        onAuthClick={() => setShowAuthModal(true)}
+        onDashboardClick={() => setShowDashboard(true)}
+      />
       <Hero onStartNow={handleStartNow} />
       
       <div ref={planGeneratorRef}>
@@ -102,6 +144,7 @@ function App() {
             originalIdea={currentIdea}
             onEditIdea={handleEditIdea}
             onRegeneratePlan={handleRegeneratePlan}
+            onAuthClick={() => setShowAuthModal(true)}
           />
         </div>
       )}
@@ -114,6 +157,20 @@ function App() {
       )}
       
       <Footer />
+      
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
+      
+      {user && (
+        <UserDashboard
+          isOpen={showDashboard}
+          onClose={() => setShowDashboard(false)}
+          onLoadIdea={handleLoadIdea}
+          onNewIdea={handleNewIdea}
+        />
+      )}
     </div>
   );
 }
