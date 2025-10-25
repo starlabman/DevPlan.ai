@@ -19,6 +19,8 @@ export interface UserIdea {
   structure: string[];
   deployment: string[];
   pitch_deck: any[];
+  current_version: number;
+  total_versions: number;
   created_at: string;
   updated_at: string;
 }

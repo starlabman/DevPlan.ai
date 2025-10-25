@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, UserIdea } from '../lib/supabase';
 import { useAuth } from './useAuth';
+import { versionService } from '../services/versionService';
 
 export const useUserIdeas = () => {
   const { user } = useAuth();
@@ -33,31 +34,119 @@ export const useUserIdeas = () => {
     roadmap: any[],
     structure: string[],
     deployment: string[],
-    pitchDeck: any[]
+    pitchDeck: any[],
+    existingIdeaId?: string
   ) => {
     if (!user) return null;
 
     try {
-      const { data, error } = await supabase
-        .from('user_ideas')
-        .insert({
-          user_id: user.id,
-          title,
-          description,
-          tech_stack: techStack,
-          roadmap,
-          structure,
-          deployment,
-          pitch_deck: pitchDeck,
-        })
-        .select()
-        .single();
+      let ideaData: UserIdea;
+      let versionNumber = 1;
 
-      if (error) throw error;
-      
-      // Refresh ideas list
+      if (existingIdeaId) {
+        const { data: existingIdea, error: fetchError } = await supabase
+          .from('user_ideas')
+          .select('*')
+          .eq('id', existingIdeaId)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        versionNumber = (existingIdea.total_versions || 0) + 1;
+
+        const previousVersion = await versionService.getVersion(
+          existingIdeaId,
+          existingIdea.current_version || 1
+        );
+
+        const { data: updatedIdea, error: updateError } = await supabase
+          .from('user_ideas')
+          .update({
+            description,
+            tech_stack: techStack,
+            roadmap,
+            structure,
+            deployment,
+            pitch_deck: pitchDeck,
+            current_version: versionNumber,
+            total_versions: versionNumber,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingIdeaId)
+          .select()
+          .single();
+
+        if (updateError) throw updateError;
+
+        let changesSummary = '';
+        if (previousVersion) {
+          const currentVersionData = {
+            ...previousVersion,
+            description,
+            tech_stack: techStack,
+            roadmap,
+            structure,
+            deployment,
+            pitch_deck: pitchDeck,
+          };
+          const diffs = versionService.compareVersions(previousVersion, currentVersionData as any);
+          changesSummary = versionService.generateChangesSummary(diffs);
+        }
+
+        await versionService.createVersion(
+          existingIdeaId,
+          versionNumber,
+          {
+            description,
+            tech_stack: techStack,
+            roadmap,
+            structure,
+            deployment,
+            pitch_deck: pitchDeck,
+          },
+          changesSummary
+        );
+
+        ideaData = updatedIdea;
+      } else {
+        const { data, error } = await supabase
+          .from('user_ideas')
+          .insert({
+            user_id: user.id,
+            title,
+            description,
+            tech_stack: techStack,
+            roadmap,
+            structure,
+            deployment,
+            pitch_deck: pitchDeck,
+            current_version: 1,
+            total_versions: 1,
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        await versionService.createVersion(
+          data.id,
+          1,
+          {
+            description,
+            tech_stack: techStack,
+            roadmap,
+            structure,
+            deployment,
+            pitch_deck: pitchDeck,
+          },
+          'Initial version'
+        );
+
+        ideaData = data;
+      }
+
       await fetchIdeas();
-      return data;
+      return ideaData;
     } catch (error) {
       console.error('Error saving idea:', error);
       return null;

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Code, Database, Smartphone, Server, CreditCard, Cloud, CheckCircle, FolderTree, Rocket, Target, Calendar, Star, Copy, Download, FileText, ExternalLink, Check, RefreshCw, CreditCard as Edit3, Save, Heart } from 'lucide-react';
+import { Code, Database, Smartphone, Server, CreditCard, Cloud, CheckCircle, FolderTree, Rocket, Target, Calendar, Star, Copy, Download, FileText, ExternalLink, Check, RefreshCw, CreditCard as Edit3, Save, Heart, GitBranch } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useUserIdeas } from '../hooks/useUserIdeas';
+import VersionHistory from './VersionHistory';
+import { IdeaVersion } from '../services/versionService';
 
 interface TechStackItem {
   name: string;
@@ -28,14 +30,22 @@ interface ResultsProps {
   onEditIdea: () => void;
   onRegeneratePlan: () => void;
   onAuthClick?: () => void;
+  currentIdeaId?: string;
+  currentVersion?: number;
+  totalVersions?: number;
+  onLoadVersion?: (version: IdeaVersion) => void;
 }
 
-const Results: React.FC<ResultsProps> = ({ 
-  plan, 
-  originalIdea, 
-  onEditIdea, 
+const Results: React.FC<ResultsProps> = ({
+  plan,
+  originalIdea,
+  onEditIdea,
   onRegeneratePlan,
-  onAuthClick 
+  onAuthClick,
+  currentIdeaId,
+  currentVersion = 1,
+  totalVersions = 1,
+  onLoadVersion
 }) => {
   const { user } = useAuth();
   const { saveIdea } = useUserIdeas();
@@ -43,6 +53,7 @@ const Results: React.FC<ResultsProps> = ({
   const [isExporting, setIsExporting] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
 
   const formatPlanAsText = () => {
     let text = `# Development Plan for: ${originalIdea}\n\n`;
@@ -210,9 +221,28 @@ const Results: React.FC<ResultsProps> = ({
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Your Development Plan
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-4">
             Here's your comprehensive roadmap to turn your idea into reality
           </p>
+
+          {currentIdeaId && (
+            <div className="flex items-center justify-center gap-2 mb-8">
+              <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                <GitBranch className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-900">
+                  Version {currentVersion} of {totalVersions}
+                </span>
+              </div>
+              {totalVersions > 1 && (
+                <button
+                  onClick={() => setShowVersionHistory(true)}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-medium underline"
+                >
+                  View History
+                </button>
+              )}
+            </div>
+          )}
           
           {/* Action Buttons */}
           <div className="flex flex-wrap justify-center gap-4 mb-8">
@@ -288,6 +318,16 @@ const Results: React.FC<ResultsProps> = ({
               <RefreshCw className="h-5 w-5 mr-2" />
               Regenerate Plan
             </button>
+
+            {currentIdeaId && totalVersions > 0 && (
+              <button
+                onClick={() => setShowVersionHistory(true)}
+                className="inline-flex items-center px-6 py-3 bg-white border border-gray-300 rounded-lg shadow-sm hover:shadow-md text-gray-700 hover:text-gray-900 transition-all duration-200"
+              >
+                <GitBranch className="h-5 w-5 mr-2" />
+                Version History ({totalVersions})
+              </button>
+            )}
           </div>
         </div>
 
@@ -433,6 +473,18 @@ const Results: React.FC<ResultsProps> = ({
           </div>
         </div>
       </div>
+
+      {currentIdeaId && onLoadVersion && (
+        <VersionHistory
+          isOpen={showVersionHistory}
+          onClose={() => setShowVersionHistory(false)}
+          ideaId={currentIdeaId}
+          onLoadVersion={(version) => {
+            onLoadVersion(version);
+            setShowVersionHistory(false);
+          }}
+        />
+      )}
     </section>
   );
 };

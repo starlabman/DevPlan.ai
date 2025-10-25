@@ -12,6 +12,7 @@ import { generatePlan } from './utils/planGenerator';
 import { generatePitchDeck } from './utils/pitchDeckGenerator';
 import { useAuth } from './hooks/useAuth';
 import { UserIdea } from './lib/supabase';
+import { IdeaVersion } from './services/versionService';
 
 interface Plan {
   techStack: Array<{
@@ -43,6 +44,9 @@ function App() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isGeneratingPitch, setIsGeneratingPitch] = useState(false);
   const [currentIdea, setCurrentIdea] = useState('');
+  const [currentIdeaId, setCurrentIdeaId] = useState<string | undefined>(undefined);
+  const [currentVersion, setCurrentVersion] = useState(1);
+  const [totalVersions, setTotalVersions] = useState(1);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showChatAssistant, setShowChatAssistant] = useState(false);
@@ -94,23 +98,23 @@ function App() {
 
   const handleLoadIdea = (idea: UserIdea) => {
     setCurrentIdea(idea.description);
-    
-    // Reconstruct the plan from saved data
+    setCurrentIdeaId(idea.id);
+    setCurrentVersion(idea.current_version || 1);
+    setTotalVersions(idea.total_versions || 1);
+
     const loadedPlan: Plan = {
       techStack: idea.tech_stack || [],
       roadmap: idea.roadmap || [],
       structure: idea.structure || [],
       deployment: idea.deployment || []
     };
-    
+
     setPlan(loadedPlan);
-    
-    // Load pitch deck if available
+
     if (idea.pitch_deck && idea.pitch_deck.length > 0) {
       setPitchDeck(idea.pitch_deck);
     }
-    
-    // Scroll to results
+
     setTimeout(() => {
       resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
@@ -120,7 +124,32 @@ function App() {
     setPlan(null);
     setPitchDeck(null);
     setCurrentIdea('');
+    setCurrentIdeaId(undefined);
+    setCurrentVersion(1);
+    setTotalVersions(1);
     planGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleLoadVersion = (version: IdeaVersion) => {
+    setCurrentIdea(version.description);
+    setCurrentVersion(version.version_number);
+
+    const versionPlan: Plan = {
+      techStack: version.tech_stack || [],
+      roadmap: version.roadmap || [],
+      structure: version.structure || [],
+      deployment: version.deployment || []
+    };
+
+    setPlan(versionPlan);
+
+    if (version.pitch_deck && version.pitch_deck.length > 0) {
+      setPitchDeck(version.pitch_deck);
+    }
+
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
   };
 
   const handleRefineWithAI = () => {
@@ -156,12 +185,16 @@ function App() {
       
       {plan && (
         <div ref={resultsRef}>
-          <Results 
-            plan={plan} 
+          <Results
+            plan={plan}
             originalIdea={currentIdea}
             onEditIdea={handleEditIdea}
             onRegeneratePlan={handleRegeneratePlan}
             onAuthClick={() => setShowAuthModal(true)}
+            currentIdeaId={currentIdeaId}
+            currentVersion={currentVersion}
+            totalVersions={totalVersions}
+            onLoadVersion={handleLoadVersion}
           />
         </div>
       )}
