@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Code, Database, Smartphone, Server, CreditCard, Cloud, CheckCircle, FolderTree, Rocket, Target, Calendar, Star, Copy, Download, FileText, ExternalLink, Check, RefreshCw, CreditCard as Edit3, Save, Heart, GitBranch } from 'lucide-react';
+import { Code, Database, Smartphone, Server, CreditCard, Cloud, CheckCircle, FolderTree, Rocket, Target, Calendar, Star, Copy, Download, FileText, ExternalLink, Check, RefreshCw, CreditCard as Edit3, Save, Heart, GitBranch, Share2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useUserIdeas } from '../hooks/useUserIdeas';
 import VersionHistory from './VersionHistory';
+import ShareModal from './ShareModal';
 import { IdeaVersion } from '../services/versionService';
 
 interface TechStackItem {
@@ -54,6 +55,7 @@ const Results: React.FC<ResultsProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const formatPlanAsText = () => {
     let text = `# Development Plan for: ${originalIdea}\n\n`;
@@ -328,6 +330,16 @@ const Results: React.FC<ResultsProps> = ({
                 Version History ({totalVersions})
               </button>
             )}
+
+            {currentIdeaId && user && (
+              <button
+                onClick={() => setShowShareModal(true)}
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-lg shadow-sm hover:shadow-md hover:from-green-700 hover:to-teal-700 transition-all duration-200"
+              >
+                <Share2 className="h-5 w-5 mr-2" />
+                Share Plan
+              </button>
+            )}
           </div>
         </div>
 
@@ -483,6 +495,15 @@ const Results: React.FC<ResultsProps> = ({
             onLoadVersion(version);
             setShowVersionHistory(false);
           }}
+        />
+      )}
+
+      {currentIdeaId && user && (
+        <ShareModal
+          isOpen={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          ideaId={currentIdeaId}
+          ideaTitle={originalIdea.length > 50 ? originalIdea.substring(0, 50) + '...' : originalIdea}
         />
       )}
     </section>

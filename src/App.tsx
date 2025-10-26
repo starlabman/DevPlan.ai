@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import AuthModal from './components/AuthModal';
 import UserDashboard from './components/UserDashboard';
 import ChatAssistant from './components/ChatAssistant';
+import SharedPlanView from './components/SharedPlanView';
 import Header from './components/Header';
 import Hero from './components/Hero';
 import PlanGenerator from './components/PlanGenerator';
@@ -50,10 +51,19 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [showChatAssistant, setShowChatAssistant] = useState(false);
+  const [shareToken, setShareToken] = useState<string | null>(null);
   const planGeneratorRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
 
   const { user } = useAuth();
+
+  useEffect(() => {
+    const path = window.location.pathname;
+    const match = path.match(/^\/shared\/([a-zA-Z0-9]+)$/);
+    if (match) {
+      setShareToken(match[1]);
+    }
+  }, []);
 
   const handleStartNow = () => {
     planGeneratorRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -166,9 +176,13 @@ function App() {
     handleGeneratePlan(refinedIdea);
   };
 
+  if (shareToken) {
+    return <SharedPlanView shareToken={shareToken} />;
+  }
+
   return (
     <div className="min-h-screen bg-white">
-      <Header 
+      <Header
         onAuthClick={() => setShowAuthModal(true)}
         onDashboardClick={() => setShowDashboard(true)}
       />
