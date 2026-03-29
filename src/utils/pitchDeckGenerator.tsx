@@ -16,35 +16,44 @@ interface PitchSlide {
   color: string;
 }
 
+const analyzeIdea = (idea: string) => {
+  const lower = idea.toLowerCase();
+  return {
+    isMarketplace: /marketplace|exchange|buy|sell|trade|service|provider|platform/.test(lower),
+    isMobileApp: /mobile|app|ios|android|native/.test(lower),
+    hasPayments: /payment|subscription|billing|purchase|buy|sell|transaction|commerce/.test(lower),
+    isB2B: /business|company|enterprise|b2b|saas|corporate/.test(lower),
+    isSocial: /social|community|network|friend|share|post|feed|collaboration/.test(lower),
+    isBooking: /book|schedule|appointment|reservation|calendar/.test(lower),
+    isAnalytics: /analytics|metric|report|tracking|insight|dashboard|data/.test(lower),
+  };
+};
+
 export const generatePitchDeck = async (idea: string): Promise<PitchSlide[]> => {
-  // Simulate AI processing
   await new Promise(resolve => setTimeout(resolve, 1500));
 
-  // Analyze the idea to generate contextual content
-  const isMarketplace = idea.toLowerCase().includes('marketplace') || idea.toLowerCase().includes('platform');
-  const isMobileApp = idea.toLowerCase().includes('mobile') || idea.toLowerCase().includes('app');
-  const hasPayments = idea.toLowerCase().includes('payment') || idea.toLowerCase().includes('subscription') || idea.toLowerCase().includes('buy') || idea.toLowerCase().includes('sell');
-  const isB2B = idea.toLowerCase().includes('business') || idea.toLowerCase().includes('company') || idea.toLowerCase().includes('enterprise');
-  const isSocial = idea.toLowerCase().includes('social') || idea.toLowerCase().includes('community') || idea.toLowerCase().includes('share');
-  const isBooking = idea.toLowerCase().includes('book') || idea.toLowerCase().includes('schedule') || idea.toLowerCase().includes('appointment');
+  const analysis = analyzeIdea(idea);
+  const { isMarketplace, isMobileApp, hasPayments, isB2B, isSocial, isBooking, isAnalytics } = analysis;
   
   const slides: PitchSlide[] = [
     {
       title: "The Problem",
       content: [
-        isMarketplace 
-          ? "Fragmented market with no centralized solution for connecting providers and consumers"
-          : "Current solutions are outdated, inefficient, and don't meet modern user expectations",
-        isMobileApp 
-          ? "Users need on-the-go access but existing mobile solutions are limited or non-existent"
-          : "Desktop-only solutions don't accommodate today's mobile-first world",
-        isB2B 
-          ? "Businesses waste countless hours on manual processes and outdated systems"
-          : "Consumers face unnecessary friction and complexity in their daily tasks",
-        isBooking 
-          ? "Scheduling and booking processes are still largely manual and time-consuming"
-          : "Existing alternatives are either too complex for beginners or too basic for power users",
-        "This market gap creates a significant opportunity for an innovative, user-centric solution"
+        isMarketplace
+          ? "Fragmented market lacks a unified platform connecting service providers with consumers efficiently"
+          : isB2B
+          ? "Businesses struggle with manual workflows, legacy systems, and inefficient processes"
+          : "Users encounter friction, complexity, and poor experiences with existing solutions",
+        isMobileApp
+          ? "Mobile accessibility is critical but existing solutions lack native performance or sync"
+          : "Web-first solutions still don't provide the seamless experience users expect",
+        isBooking
+          ? "Booking and scheduling remain largely manual, error-prone, and time-intensive"
+          : isSocial
+          ? "Community and engagement tools are fragmented across multiple platforms"
+          : "Current alternatives lack the combination of power, simplicity, and affordability",
+        "This creates an opportunity for a focused, user-centric solution",
+        `Market opportunity: Millions of potential users and substantial revenue potential`
       ],
       icon: <Target className="h-8 w-8" />,
       color: "red"
@@ -52,16 +61,16 @@ export const generatePitchDeck = async (idea: string): Promise<PitchSlide[]> => 
     {
       title: "Our Solution",
       content: [
-        `${idea.charAt(0).toUpperCase() + idea.slice(1)} - reimagined for the modern digital landscape`,
-        "Intuitive, user-friendly interface designed with efficiency and simplicity in mind",
-        isMobileApp 
-          ? "Mobile-first approach with seamless cross-platform synchronization"
-          : "Responsive web application accessible from any device, anywhere",
-        isBooking 
-          ? "Automated scheduling with smart conflict resolution and notifications"
-          : "Intelligent automation that reduces manual work and eliminates human error",
-        "Built with scalability, security, and performance as core principles",
-        "Directly addresses identified pain points with innovative, tested features"
+        `${idea.charAt(0).toUpperCase() + idea.slice(1).substring(0, 40)} - a modern, focused approach`,
+        "Clean interface that prioritizes the core user problem without unnecessary complexity",
+        isMobileApp
+          ? "Mobile-first architecture with cross-platform synchronization and offline support"
+          : "Responsive web design that works seamlessly across all devices and screen sizes",
+        isBooking
+          ? "Intelligent automation for scheduling with conflict prevention and notifications"
+          : "Built on reliable, proven technologies that scale with your user base",
+        "Security and performance baked in from day one, not bolted on later",
+        `Focus on what matters: solving the core problem exceptionally well`
       ],
       icon: <Lightbulb className="h-8 w-8" />,
       color: "blue"
@@ -69,19 +78,21 @@ export const generatePitchDeck = async (idea: string): Promise<PitchSlide[]> => 
     {
       title: "Target Audience",
       content: [
-        isB2B 
-          ? "Primary: Small to medium businesses (10-500 employees) seeking digital transformation"
-          : "Primary: Tech-savvy consumers aged 25-45 who value efficiency and quality",
-        isSocial 
-          ? "Secondary: Community builders, content creators, and social media managers"
-          : isBooking
-          ? "Secondary: Service providers looking to streamline their booking processes"
-          : "Secondary: Professionals and freelancers seeking productivity tools",
-        isMarketplace 
-          ? "Tertiary: Both service providers looking to expand reach and consumers seeking convenience"
-          : "Tertiary: Early adopters who embrace new technology and innovative solutions",
-        `Geographic focus: Initially ${isB2B ? 'North America and Europe' : 'English-speaking markets'}, expanding globally`,
-        `Market size: ${isB2B ? '50M+ businesses' : '100M+ potential users'} with ${hasPayments ? 'high monetization potential' : 'strong engagement metrics'}`
+        isB2B
+          ? "Primary: Mid-market businesses (50-500 employees) needing operational efficiency"
+          : isSocial
+          ? "Primary: Community leaders, content creators, and engaged user groups"
+          : "Primary: Tech-forward consumers aged 25-50 who prioritize quality and ease of use",
+        isBooking
+          ? "Secondary: Service professionals (consultants, therapists, contractors) needing better tools"
+          : isMarketplace
+          ? "Secondary: Both service providers expanding reach and consumers seeking convenience"
+          : "Secondary: Professionals and teams seeking productivity improvements",
+        isB2B
+          ? "Geographic: Initially North America, expanding to EU and APAC"
+          : "Geographic: English-speaking markets first, then international expansion",
+        `Market size: ${isB2B ? '20M+ target businesses' : '50M+ addressable users'} with strong product-market fit potential`,
+        `Monetization: ${hasPayments ? 'Transaction-based revenue with high margins' : 'Subscription model with strong unit economics'}`
       ],
       icon: <Users className="h-8 w-8" />,
       color: "green"
@@ -89,84 +100,88 @@ export const generatePitchDeck = async (idea: string): Promise<PitchSlide[]> => 
     {
       title: "How It Works",
       content: [
-        "1. User registration with streamlined onboarding and guided setup process",
-        isMobileApp 
-          ? "2. Download mobile app or access responsive web platform with account sync"
-          : "2. Access web platform from any device with automatic data synchronization",
-        "3. Complete personalized profile setup with preferences and customization options",
-        isMarketplace 
-          ? "4. Browse available services, compare options, or list your own services"
-          : isBooking
-          ? "4. Set availability, configure services, and enable automated booking"
-          : "4. Configure dashboard, connect integrations, and customize workflow",
-        "5. Utilize core features with intelligent recommendations and automation",
-        hasPayments 
-          ? "6. Process payments securely with integrated billing and invoicing"
-          : "6. Track progress, analyze usage, and optimize performance",
-        "7. Scale usage with advanced features, team collaboration, and enterprise options"
+        "1. Quick, frictionless signup with email authentication",
+        isMobileApp
+          ? "2. Responsive web interface or native mobile app with automatic sync"
+          : "2. Immediately productive web interface accessible everywhere",
+        "3. Guided onboarding that gets users to core value within minutes",
+        isBooking
+          ? "4. Providers set availability; consumers book instantly with confirmation"
+          : isMarketplace
+          ? "4. Browse or list services, complete transactions, manage reputation"
+          : "4. Configure preferences and start using core features immediately",
+        hasPayments
+          ? "5. Secure payment processing integrated directly into the workflow"
+          : "5. Real-time collaboration and data synchronization across devices",
+        "6. Dashboard provides insights, notifications, and usage analytics",
+        "7. Simple pricing scales with your usage - pay for what you need"
       ],
       icon: <Cog className="h-8 w-8" />,
       color: "purple"
     },
     {
-      title: "Tech Stack Summary",
+      title: "Tech Stack",
       content: [
-        "Frontend: React + TypeScript for robust, maintainable user interface",
-        "Backend: Node.js + Express for scalable API and business logic",
-        "Database: PostgreSQL for reliable data storage with ACID compliance",
-        isMobileApp ? "Mobile: React Native for cross-platform mobile applications" : "Responsive: Mobile-optimized web interface",
-        hasPayments ? "Payments: Stripe integration for secure payment processing" : "Authentication: JWT + bcrypt for secure user management",
-        "Hosting: Vercel (frontend) + Railway (backend) for reliable, scalable deployment",
-        "Additional: Real-time features, automated testing, and comprehensive monitoring"
+        "Frontend: React 18 + TypeScript with Tailwind CSS for rapid, consistent UI",
+        "Backend: Supabase (managed PostgreSQL) provides database, auth, and real-time features",
+        isMobileApp
+          ? "Mobile: React Native / Expo for iOS + Android from single codebase"
+          : "Responsive: Mobile-optimized web interface with progressive enhancement",
+        hasPayments
+          ? "Payments: Stripe for secure, PCI-compliant payment processing"
+          : "Analytics: Product analytics built-in for data-driven decisions",
+        "Hosting: Vercel for frontend with global edge deployment and auto-scaling",
+        "Deployment: GitHub Actions CI/CD pipeline for automatic testing and releases",
+        "Monitoring: Error tracking and performance monitoring from day one"
       ],
       icon: <Rocket className="h-8 w-8" />,
       color: "indigo"
     },
     {
-      title: "Revenue Model",
+      title: "Business Model",
       content: [
-        hasPayments 
-          ? "Transaction fees: 2-3% commission on processed payments"
+        hasPayments
+          ? "Transaction-based: Take 2-5% commission on every transaction processed"
           : isB2B
-          ? "SaaS subscription: Tiered pricing from $29/month (Basic) to $199/month (Enterprise)"
-          : "Freemium model: Free tier with premium features starting at $9.99/month",
-        isMarketplace 
-          ? "Listing fees: Premium placement and featured listings for service providers"
-          : "Premium features: Advanced analytics, integrations, and customization options",
-        isB2B 
-          ? "Enterprise licensing: Custom solutions and white-label options for large organizations"
-          : "In-app purchases: Additional storage, templates, or specialized tools",
-        "Partnership revenue: Integration partnerships and affiliate marketing programs",
-        `Projected revenue: ${hasPayments ? '$100K ARR by month 12' : '$50K ARR by month 18'} with 25-30% monthly growth`,
-        "Long-term: API licensing, marketplace expansion, and acquisition opportunities"
+          ? "SaaS subscription: $49/month (Starter) to $299/month (Enterprise) based on usage"
+          : "Freemium: Free tier + premium at $9.99/month for power users",
+        isMarketplace
+          ? "Premium listings: Featured placement and promotional options for top sellers"
+          : isB2B
+          ? "Add-ons: Advanced analytics, API access, and dedicated support"
+          : "In-app purchases: Premium templates, storage upgrades, and features",
+        "Revenue is predictable, recurring, and scales with user success",
+        `Realistic first-year target: $20-50K MRR with disciplined growth`,
+        "Long-term: High-margin revenue from complementary products and services",
+        "Path to profitability: Strong unit economics from month 3-6"
       ],
       icon: <DollarSign className="h-8 w-8" />,
       color: "yellow"
     },
     {
-      title: "MVP Development Plan",
+      title: "Development Timeline",
       content: [
-        "Phase 1 (Weeks 1-2): Core infrastructure, user authentication, and basic UI",
-        "Phase 2 (Weeks 3-6): Primary features, database integration, and core workflows",
-        "Phase 3 (Weeks 7-10): Advanced features, payment integration, and mobile optimization",
-        "Phase 4 (Weeks 11-12): Testing, security audit, and deployment preparation",
-        "Beta launch: Limited user testing with 50-100 early adopters",
-        "Public launch: Full feature set with marketing campaign and user acquisition",
-        "Post-launch: Continuous improvement based on user feedback and analytics"
+        "Phase 1 (Weeks 1-3): Setup, auth, core database schema, landing page",
+        "Phase 2 (Weeks 4-9): Main features, user flows, API integration, basic mobile support",
+        "Phase 3 (Weeks 10-14): Polish, performance, security hardening, payment integration",
+        "Phase 4 (Week 15-16): Beta launch with 100-500 early adopters for feedback",
+        "Week 17-18: Address feedback, final security audit, launch preparation",
+        "Timeline assumes one experienced team or two experienced developers",
+        "Reality: Estimate 1.5-2x longer if learning as you go"
       ],
       icon: <Calendar className="h-8 w-8" />,
       color: "orange"
     },
     {
-      title: "Ready to Build This?",
+      title: "Why Now?",
       content: [
-        "🚀 You have a comprehensive development plan and pitch deck ready to go",
-        "💡 Your idea has been validated with market analysis and technical feasibility",
-        "🛠️ Complete tech stack recommendations ensure you're using proven technologies",
-        "📈 Revenue model and target audience provide clear business direction",
-        "⏰ Development timeline gives you realistic milestones and expectations",
-        "🎯 Next steps: Start with Phase 1, build your MVP, and validate with real users",
-        "💪 Transform your idea into reality - the foundation is already laid out for you!"
+        "Market conditions are ideal: proven demand and minimal competition",
+        "Technology is mature: frameworks, tools, and infrastructure have reached critical mass",
+        "User expectations have risen: they demand quality and simplicity",
+        "Distribution has gotten easier: product-led growth and social proof work",
+        "Your approach: focused, pragmatic, and executable with available resources",
+        "Success metrics: Clear KPIs for launch, engagement, and revenue",
+        "Next step: Validate with 10-20 real users, then iterate based on actual feedback"
       ],
       icon: <TrendingUp className="h-8 w-8" />,
       color: "emerald"
